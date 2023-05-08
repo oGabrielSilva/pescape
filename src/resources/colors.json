@@ -1,0 +1,18 @@
+{
+  "dark": {
+    "bg": { "value": "#23272f", "name": "--bg" },
+    "text": { "value": "#e6e7eb", "name": "--text" },
+    "title": { "value": "#f6f7f9", "name": "--title" },
+    "variant": { "value": "#087ea4", "name": "--variant" },
+    "bgVariant": { "value": "#1a1c23", "name": "--bg-variant" },
+    "name": "dark"
+  },
+  "light": {
+    "bg": { "value": "#ffffff", "name": "--bg" },
+    "text": { "value": "#404756", "name": "--text" },
+    "title": { "value": "#23272f", "name": "--title" },
+    "variant": { "value": "#087ea4", "name": "--variant" },
+    "bgVariant": { "value": "#ebecf0", "name": "--bg-variant" },
+    "name": "light"
+  }
+}
