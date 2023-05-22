@@ -1,4 +1,5 @@
 import ImagePreview from './ImagePreview';
+import VideoPreview from './VideoPreview';
 
 interface FilesPreviewProps {
   files: Array<File>;
@@ -25,11 +26,22 @@ export default function FilesPreview({ files, setList }: FilesPreviewProps) {
                 list.splice(index, 1);
                 setList(list);
               }}
-              image={file}
+              file={file}
               key={index}
             />
           );
-        return <div></div>;
+        else if (file.type.startsWith('video/'))
+          return (
+            <VideoPreview
+              file={file}
+              key={index}
+              onRemoveClick={() => {
+                const list = [...files];
+                list.splice(index, 1);
+                setList(list);
+              }}
+            />
+          );
       })}
     </div>
   );

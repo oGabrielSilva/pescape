@@ -8,6 +8,11 @@ export declare global {
     name: string;
   }
 
+  interface PreviewProps {
+    file: File;
+    onRemoveClick: () => void;
+  }
+
   interface InterfaceThemeStructure {
     bg: InterfaceThemeElementStructure;
     text: InterfaceThemeElementStructure;

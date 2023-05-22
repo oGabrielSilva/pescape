@@ -90,3 +90,9 @@ button:hover {
   border-radius: 4px;
   margin: 0.5rem 0 1rem 0;
 }
+
+label button {
+  background: transparent;
+  color: var(--variant);
+  text-decoration: underline;
+}

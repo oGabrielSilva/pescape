@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-interface ImagePreviewProps {
-  image: File;
-  onRemoveClick: () => void;
-}
-
-export default function ImagePreview({ image, onRemoveClick }: ImagePreviewProps) {
+export default function ImagePreview({ file: image, onRemoveClick }: PreviewProps) {
   const [src, setSrc] = useState('');
 
   const fileReader = new FileReader();

@@ -1,5 +1,5 @@
 import { AppContext } from '@PescaPE/context/AppContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import FilesPreview from './FilesPreview';
 
 export default function FormReport() {
@@ -7,10 +7,14 @@ export default function FormReport() {
 
   const [files, setFiles] = useState<Array<File>>([]);
 
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (visible) window.document.body.style.overflow = 'hidden';
     else window.document.body.style.overflow = '';
   }, [visible]);
+
+  useEffect(() => console.log(files), [files]);
 
   return (
     <div
@@ -76,18 +80,79 @@ export default function FormReport() {
           id="details"
           placeholder="Se você tiver informações sobre os indivíduos ou embarcações envolvidas, forneça detalhes como nomes, descrições físicas, números de registro, se disponíveis."
         ></textarea>
-        <label htmlFor="file">Provas ou evidências</label>
+        <label htmlFor="file">
+          Provas ou evidências{' '}
+          <button
+            type="button"
+            onClick={() => {
+              if (files.length > 0) setFiles([]);
+            }}
+          >
+            Remover todas
+          </button>
+        </label>
+        <div
+          style={{
+            minHeight: 100,
+            marginTop: '0.5rem',
+            borderRadius: 8,
+            background: 'var(--bg-variant)',
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            cursor: 'pointer',
+            padding: '1rem',
+            border: '2px solid transparent',
+          }}
+          id="drag"
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.currentTarget.style.borderColor = 'var(--variant)';
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.currentTarget.style.borderColor = 'transparent';
+
+            setFiles(
+              Array.from(e.dataTransfer.files).filter(
+                (item) =>
+                  item.type.startsWith('image/') ||
+                  item.type.startsWith('video/') ||
+                  item.type.startsWith('audio/') ||
+                  item.name.endsWith('.pdf') ||
+                  item.name.endsWith('.txt') ||
+                  item.name.endsWith('.doc') ||
+                  item.name.endsWith('.docx')
+              )
+            );
+          }}
+          onClick={(e) =>
+            inputFileRef.current &&
+            typeof (e.target as HTMLDivElement).id === 'string' &&
+            (e.target as HTMLDivElement).id.includes('drag')
+              ? inputFileRef.current.click()
+              : void 0
+          }
+        >
+          <span id="drag-text" style={{ display: files.length > 0 ? 'none' : 'block' }}>
+            Clique ou arraste e solte os arquivos aqui
+          </span>
+          <FilesPreview files={files} setList={setFiles} />
+        </div>
         <input
+          ref={inputFileRef}
+          style={{ display: 'none' }}
           onInput={(e) => {
             setFiles(Array.from(e.currentTarget.files!));
+            e.currentTarget.value = '';
           }}
           type="file"
           id="file"
-          accept="image/*, video/*"
-          required
+          accept="image/*, video/*, audio/*, .txt,.doc,.docx,.pdf"
           multiple
         />
-        <FilesPreview files={files} setList={setFiles} />
       </form>
       <button
         style={{
