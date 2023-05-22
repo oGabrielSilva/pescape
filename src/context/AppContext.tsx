@@ -25,7 +25,7 @@ export default function AppContextProvider({ children }: AppContextProviderProps
 
   const [strings, setStrings] = useState<GlobalDisplayLang>(lang.getLang());
   const [themeName, setThemeName] = useState<'light' | 'dark'>('light');
-  const [formReportVisible, setFormReportVisible] = useState(true);
+  const [formReportVisible, setFormReportVisible] = useState(false);
 
   useEffect(() => {
     setThemeName(theme.getCurrentThemeName());
