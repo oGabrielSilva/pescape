@@ -11,8 +11,10 @@ interface InterfaceAppContext {
   strings: GlobalDisplayLang;
   themeName: 'light' | 'dark';
   langService: LangService;
+  formReportVisible: boolean;
   changeDisplayLang: (language: string) => void;
   setThemeName: (theme: 'light' | 'dark') => void;
+  setFormReportVisible: (visible: boolean) => void;
 }
 
 export const AppContext = createContext({} as InterfaceAppContext);
@@ -23,6 +25,7 @@ export default function AppContextProvider({ children }: AppContextProviderProps
 
   const [strings, setStrings] = useState<GlobalDisplayLang>(lang.getLang());
   const [themeName, setThemeName] = useState<'light' | 'dark'>('light');
+  const [formReportVisible, setFormReportVisible] = useState(true);
 
   useEffect(() => {
     setThemeName(theme.getCurrentThemeName());
@@ -47,7 +50,16 @@ export default function AppContextProvider({ children }: AppContextProviderProps
 
   return (
     <AppContext.Provider
-      value={{ langService: lang, strings, theme, themeName, changeDisplayLang, setThemeName }}
+      value={{
+        langService: lang,
+        strings,
+        theme,
+        themeName,
+        formReportVisible,
+        setFormReportVisible,
+        changeDisplayLang,
+        setThemeName,
+      }}
     >
       {children}
     </AppContext.Provider>

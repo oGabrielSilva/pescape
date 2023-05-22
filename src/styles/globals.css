@@ -3,8 +3,9 @@
   --text: #404756;
   --title: #23272f;
   --variant: #087ea4;
-  --bg-variant: #ebecf0;
+  --bg-variant: #dbdce0;
   --green: #0a5517;
+  --danger: #ff2222;
 }
 
 * {
@@ -22,7 +23,7 @@
 
 body {
   background: var(--bg);
-  font-size: 18px;
+  font-size: 16px;
 }
 
 h1,
@@ -68,4 +69,24 @@ button:hover {
 .line {
   width: 50%;
   border: 1px solid var(--text);
+}
+
+#make-report textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#make-report select,
+#make-report select option {
+  text-transform: uppercase;
+}
+
+#make-report select,
+#make-report input,
+#make-report textarea {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--bg-variant);
+  border-radius: 4px;
+  margin: 0.5rem 0 1rem 0;
 }

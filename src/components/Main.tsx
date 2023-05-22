@@ -2,7 +2,7 @@ import { AppContext } from '@PescaPE/context/AppContext';
 import { useContext } from 'react';
 
 export default function Main() {
-  const { strings, themeName } = useContext(AppContext);
+  const { strings, themeName, setFormReportVisible } = useContext(AppContext);
 
   return (
     <main
@@ -28,14 +28,7 @@ export default function Main() {
       >
         <h1>{strings.appName}</h1>
         <p style={{ margin: '1rem 0' }}>{strings.welcomeText}</p>
-        <p>
-          <small>
-            Proteger o meio ambiente é um compromisso de todos nós e denunciar crimes ambientais é
-            uma forma rápida, fácil e anônima de contribuir para essa causa tão importante. Com sua
-            ajuda, podemos garantir que nossos oceanos e suas riquezas naturais sejam preservados
-            para as gerações futuras. Faça a diferença e comece a agir hoje mesmo!
-          </small>
-        </p>
+        <p>{strings.welcomeText2}</p>
       </section>
       <section
         style={{
@@ -50,6 +43,7 @@ export default function Main() {
         }}
       >
         <button
+          onClick={() => setFormReportVisible(true)}
           style={{
             width: '50%',
             maxWidth: 200,
@@ -70,8 +64,8 @@ export default function Main() {
             background: 'transparent',
             padding: '0.5rem 1rem',
             borderRadius: 4,
-            border: '2px solid var(--text)',
             fontWeight: 700,
+            color: 'var(--variant)',
           }}
         >
           {strings.trackYourReport}
@@ -106,9 +100,7 @@ export default function Main() {
           </a>
           .
         </p>
-        <p>
-          <small>{strings.ibamaText}</small>
-        </p>
+        <p>{strings.ibamaText}</p>
       </section>
     </main>
   );
