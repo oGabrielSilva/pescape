@@ -15,6 +15,19 @@ const displayStrings = {
     here: 'aqui',
     ibamaText:
       'O Ibama também disponibiliza um canal de atendimento telefônico, o Linha Verde, pelo número 0800 61 8080. Lembre-se, denunciar é um ato importante para preservar o meio ambiente e garantir a responsabilização de quem comete crimes ambientais.',
+    formReportTitle: 'Formulário de Denúncia Anônima - Crimes de Pesca',
+    formReportSubtitle:
+      ' Por favor, preencha as informações abaixo para fornecer detalhes sobre a denúncia. Lembre-se de que suas respostas serão mantidas em sigilo.',
+    reportType: 'Tipo de crime',
+    illegalFising: 'Pesca ilegal',
+    predatoryFishing: 'Pesca predatória',
+    useOfProhibitedFishingMethods: 'Uso de métodos de pesca proibidos',
+    protectedAreaFishing: 'Pesca em área protegida',
+    other: 'Outro (especifique)',
+    formDescription: 'Descrição do ocorrido',
+    formDetails: 'Detalhes sobre os envolvidos',
+    sendReport: 'Enviar denuncia',
+    cancel: 'Cancelar',
   },
   en: {
     displaySelect: { label: 'English', key: 'en' },

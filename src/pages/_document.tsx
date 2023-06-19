@@ -18,6 +18,10 @@ export default function Document() {
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
         />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+        />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </Head>
       <body>

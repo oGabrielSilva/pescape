@@ -1,5 +1,5 @@
 import { AppContext } from '@PescaPE/context/AppContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
 export default function ButtonChangeTheme() {
   const { theme, strings, themeName, setThemeName } = useContext(AppContext);

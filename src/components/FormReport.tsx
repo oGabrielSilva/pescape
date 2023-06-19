@@ -1,20 +1,52 @@
 import { AppContext } from '@PescaPE/context/AppContext';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { FormEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import FilesPreview from './FilesPreview';
 
 export default function FormReport() {
-  const { formReportVisible: visible, setFormReportVisible: setVisible } = useContext(AppContext);
+  const {
+    formReportVisible: visible,
+    setFormReportVisible: setVisible,
+    strings,
+  } = useContext(AppContext);
 
   const [files, setFiles] = useState<Array<File>>([]);
+  const [filesDataURL, setDataURL] = useState<Array<string>>([]);
 
+  const selectTypeRef = useRef<HTMLSelectElement>(null);
+  const inputDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const inputDetailsRef = useRef<HTMLTextAreaElement>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
+
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    if (!selectTypeRef.current || !inputDescriptionRef.current || !inputDetailsRef.current) return;
+    const { value: type } = selectTypeRef.current;
+    const { value: descriptionOccurred } = inputDescriptionRef.current;
+    const { value: detailsInvolved } = inputDetailsRef.current;
+    const evidences = files.map(async (f) => {
+      const func = () =>
+        new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(f);
+        });
+      return await func();
+    });
+    Promise.all(evidences).then((e) => {
+      fetch('/api/report', {
+        method: 'POST',
+        body: JSON.stringify({ type, descriptionOccurred, detailsInvolved, evidences: e }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    });
+  };
 
   useEffect(() => {
     if (visible) window.document.body.style.overflow = 'hidden';
     else window.document.body.style.overflow = '';
   }, [visible]);
-
-  useEffect(() => console.log(files), [files]);
 
   return (
     <div
@@ -33,6 +65,7 @@ export default function FormReport() {
       }}
     >
       <form
+        onSubmit={onSubmit}
         id="make-report"
         autoCapitalize="off"
         autoCorrect="off"
@@ -46,7 +79,7 @@ export default function FormReport() {
           padding: '1rem',
         }}
       >
-        <h2 style={{ marginBottom: '1rem' }}>Formulário de Denúncia Anônima - Crimes de Pesca</h2>
+        <h2 style={{ marginBottom: '1rem' }}>{strings.formReportTitle}</h2>
         <div
           style={{
             width: '100%',
@@ -55,27 +88,28 @@ export default function FormReport() {
             marginBottom: '2rem',
           }}
         >
-          <span>
-            Por favor, preencha as informações abaixo para fornecer detalhes sobre a denúncia.
-            Lembre-se de que suas respostas serão mantidas em sigilo.
-          </span>
+          <span>{strings.formReportSubtitle}</span>
         </div>
-        <label htmlFor="type">Tipo de crime</label>
-        <select id="type">
-          <option value="0">Pesca ilegal</option>
-          <option value="1">Pesca predatória</option>
-          <option value="2">Uso de métodos de pesca proibidos</option>
-          <option value="3">Pesca em área protegida</option>
-          <option value="4">Outro (especifique)</option>
+        <label htmlFor="type">{strings.reportType}</label>
+        <select name="type" ref={selectTypeRef} id="type">
+          <option value="0">{strings.illegalFising}</option>
+          <option value="1">{strings.predatoryFishing}</option>
+          <option value="2">{strings.useOfProhibitedFishingMethods}</option>
+          <option value="3">{strings.protectedAreaFishing}</option>
+          <option value="4">{strings.other}</option>
         </select>
-        <label htmlFor="description">Descrição do ocorrido</label>
+        <label htmlFor="description">{strings.formDescription}</label>
         <textarea
+          name="description"
+          ref={inputDescriptionRef}
           required
           placeholder="Forneça uma descrição detalhada do crime"
           id="description"
         />
-        <label htmlFor="details">Detalhes sobre os envolvidos</label>
+        <label htmlFor="details">{strings.formDetails}</label>
         <textarea
+          name="details"
+          ref={inputDetailsRef}
           required
           id="details"
           placeholder="Se você tiver informações sobre os indivíduos ou embarcações envolvidas, forneça detalhes como nomes, descrições físicas, números de registro, se disponíveis."
@@ -136,23 +170,44 @@ export default function FormReport() {
               : void 0
           }
         >
-          <span id="drag-text" style={{ display: files.length > 0 ? 'none' : 'block' }}>
-            Clique ou arraste e solte os arquivos aqui
-          </span>
-          <FilesPreview files={files} setList={setFiles} />
+          <span id="drag-text">Clique ou arraste e solte os arquivos aqui</span>
         </div>
+        <FilesPreview files={files} setList={setFiles} />
         <input
+          name="files"
           ref={inputFileRef}
           style={{ display: 'none' }}
-          onInput={(e) => {
-            setFiles(Array.from(e.currentTarget.files!));
-            e.currentTarget.value = '';
-          }}
+          onInput={(e) => setFiles(Array.from(e.currentTarget.files!))}
           type="file"
           id="file"
           accept="image/*, video/*, audio/*, .txt,.doc,.docx,.pdf"
           multiple
         />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <button
+            type="submit"
+            style={{
+              background: 'var(--variant)',
+              color: 'var(--bg)',
+              padding: '0.5rem 1rem',
+              borderRadius: 8,
+            }}
+          >
+            {strings.sendReport}
+          </button>
+          <button
+            onClick={() => setVisible(false)}
+            type="button"
+            style={{
+              background: 'transparent',
+              color: 'var(--danger)',
+              fontWeight: 700,
+              padding: '0.5rem',
+            }}
+          >
+            {strings.cancel}
+          </button>
+        </div>
       </form>
       <button
         style={{
