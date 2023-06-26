@@ -9,3 +9,20 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Report {
+  id                  String     @id @default(auto()) @map("_id") @db.ObjectId
+  type                String
+  detailsInvolved     String
+  descriptionOccurred String
+  code                String
+  createdAt           DateTime   @default(now())
+  evidences           Evidence[]
+}
+
+model Evidence {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  dataURL  String
+  Report   Report? @relation(fields: [reportId], references: [id])
+  reportId String? @db.ObjectId
+}

@@ -1,3 +1,4 @@
+import { client } from '@PescaPE/db/client';
 import { Exception } from '@PescaPE/exceptions/Exception';
 import { InternalServerError } from '@PescaPE/exceptions/InternalServerError';
 import { ApiResponse } from '@PescaPE/resources/ApiResponse';
@@ -15,7 +16,29 @@ interface NextApiRequestExtended extends NextApiRequest {
 export default async function handler(req: NextApiRequestExtended, res: NextApiResponse) {
   try {
     const { descriptionOccurred, detailsInvolved, type, evidences } = req.body;
-    res.status(201).end();
+    let code = '';
+    const count = await client.report.count();
+    code += count.toString();
+    code += new Date().toLocaleDateString('pt-BR').split('/')[1].split('')[1];
+    while (code.length <= 7) code += Math.random().toString().at(-1);
+    const report = await client.report.create({
+      data: {
+        descriptionOccurred,
+        detailsInvolved,
+        type,
+        code,
+      },
+    });
+    const e = evidences.map(
+      async (dataURL) => await client.evidence.create({ data: { dataURL, reportId: report.id } })
+    );
+    Promise.all(e).then((e) => {
+      res.status(201).json(
+        new ApiResponse(true, {
+          report: { code: report.code },
+        })
+      );
+    });
   } catch (error) {
     if (error instanceof Exception) return res.status(error.status).json(error);
     console.log(error);

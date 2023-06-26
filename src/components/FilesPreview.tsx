@@ -5,7 +5,7 @@ interface FilesPreviewProps {
 
 export default function FilesPreview({ files, setList }: FilesPreviewProps) {
   return (
-    <div
+    <ul
       style={{
         display: 'flex',
         justifyContent: 'center',
@@ -16,7 +16,7 @@ export default function FilesPreview({ files, setList }: FilesPreviewProps) {
       }}
     >
       {files.map((file, index) => (
-        <div
+        <li
           key={index}
           style={{
             width: '100%',
@@ -31,7 +31,12 @@ export default function FilesPreview({ files, setList }: FilesPreviewProps) {
         >
           <div>
             <strong>{index + 1}. </strong>
-            <span>{file.name}</span>
+            <span>
+              {file.name}{' '}
+              <span style={{ color: 'var(--variant)' }}>
+                ({(file.size / 1024 / 1024).toFixed(2)} MB)
+              </span>
+            </span>
           </div>
           <button
             onClick={() => {
@@ -44,8 +49,8 @@ export default function FilesPreview({ files, setList }: FilesPreviewProps) {
           >
             <span className="material-symbols-outlined">close</span>
           </button>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

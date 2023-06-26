@@ -1,6 +1,7 @@
 import { AppContext } from '@PescaPE/context/AppContext';
 import { FormEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import FilesPreview from './FilesPreview';
+import { ApiResponse } from '@PescaPE/resources/ApiResponse';
 
 export default function FormReport() {
   const {
@@ -10,7 +11,8 @@ export default function FormReport() {
   } = useContext(AppContext);
 
   const [files, setFiles] = useState<Array<File>>([]);
-  const [filesDataURL, setDataURL] = useState<Array<string>>([]);
+  const [sending, setSending] = useState(false);
+  const [lastSubmit, setLastSubmit] = useState<ApiResponse | null>(null);
 
   const selectTypeRef = useRef<HTMLSelectElement>(null);
   const inputDescriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -19,6 +21,7 @@ export default function FormReport() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+    setSending(true);
     if (!selectTypeRef.current || !inputDescriptionRef.current || !inputDetailsRef.current) return;
     const { value: type } = selectTypeRef.current;
     const { value: descriptionOccurred } = inputDescriptionRef.current;
@@ -32,14 +35,19 @@ export default function FormReport() {
         });
       return await func();
     });
-    Promise.all(evidences).then((e) => {
-      fetch('/api/report', {
+    Promise.all(evidences).then(async (e) => {
+      const response = await fetch('/api/report', {
         method: 'POST',
         body: JSON.stringify({ type, descriptionOccurred, detailsInvolved, evidences: e }),
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      const api = (await response.json()) as ApiResponse;
+
+      setSending(false);
+      setLastSubmit(api);
     });
   };
 
@@ -92,7 +100,7 @@ export default function FormReport() {
         </div>
         <label htmlFor="type">{strings.reportType}</label>
         <select name="type" ref={selectTypeRef} id="type">
-          <option value="0">{strings.illegalFising}</option>
+          <option value="0">{strings.illegalFishing}</option>
           <option value="1">{strings.predatoryFishing}</option>
           <option value="2">{strings.useOfProhibitedFishingMethods}</option>
           <option value="3">{strings.protectedAreaFishing}</option>
@@ -103,7 +111,7 @@ export default function FormReport() {
           name="description"
           ref={inputDescriptionRef}
           required
-          placeholder="Forneça uma descrição detalhada do crime"
+          placeholder={strings.descriptionPlaceholder}
           id="description"
         />
         <label htmlFor="details">{strings.formDetails}</label>
@@ -112,17 +120,17 @@ export default function FormReport() {
           ref={inputDetailsRef}
           required
           id="details"
-          placeholder="Se você tiver informações sobre os indivíduos ou embarcações envolvidas, forneça detalhes como nomes, descrições físicas, números de registro, se disponíveis."
+          placeholder={strings.detailsPlaceholder}
         ></textarea>
         <label htmlFor="file">
-          Provas ou evidências{' '}
+          {strings.evidences}{' '}
           <button
             type="button"
             onClick={() => {
               if (files.length > 0) setFiles([]);
             }}
           >
-            Remover todas
+            {strings.removeAll}
           </button>
         </label>
         <div
@@ -170,7 +178,7 @@ export default function FormReport() {
               : void 0
           }
         >
-          <span id="drag-text">Clique ou arraste e solte os arquivos aqui</span>
+          <span id="drag-text">{strings.dragFiles}</span>
         </div>
         <FilesPreview files={files} setList={setFiles} />
         <input
@@ -183,8 +191,57 @@ export default function FormReport() {
           accept="image/*, video/*, audio/*, .txt,.doc,.docx,.pdf"
           multiple
         />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
+          {lastSubmit && !sending ? (
+            <span
+              style={{
+                color: lastSubmit.success ? 'var(--title)' : 'var(--danger)',
+                fontWeight: 700,
+              }}
+            >
+              {lastSubmit.success ? (
+                <>
+                  {strings.reportSuccess}{' '}
+                  <a
+                    style={{ cursor: 'copy' }}
+                    title={strings.copy}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.document.body.classList.add('wait');
+                      const { currentTarget } = e;
+                      currentTarget.style.cursor = 'wait';
+                      navigator.clipboard
+                        .writeText((lastSubmit.body as any).report.code || '')
+                        .then(() =>
+                          setTimeout(() => {
+                            window.document.body.classList.remove('wait');
+                            currentTarget.style.cursor = 'copy';
+                          }, 800)
+                        );
+                    }}
+                  >
+                    {(lastSubmit.body as any).report.code! || ''}
+                  </a>
+                </>
+              ) : (
+                <></>
+              )}
+            </span>
+          ) : (
+            <></>
+          )}
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <button
+            disabled={sending}
             type="submit"
             style={{
               background: 'var(--variant)',
@@ -193,7 +250,7 @@ export default function FormReport() {
               borderRadius: 8,
             }}
           >
-            {strings.sendReport}
+            {sending ? <div className="spin" /> : strings.sendReport}
           </button>
           <button
             onClick={() => setVisible(false)}

@@ -1,4 +1,5 @@
 import displayStrings from '@PescaPE/resources/strs';
+import type { PrismaClient } from '@prisma/client';
 
 export declare global {
   type GlobalDisplayLang = typeof displayStrings.pt;
@@ -21,4 +22,6 @@ export declare global {
     bgVariant: InterfaceThemeElementStructure;
     name: 'light' | 'dark';
   }
+
+  var prisma: PrismaClient;
 }
