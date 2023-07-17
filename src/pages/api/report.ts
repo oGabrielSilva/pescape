@@ -16,6 +16,7 @@ interface NextApiRequestExtended extends NextApiRequest {
 export default async function handler(req: NextApiRequestExtended, res: NextApiResponse) {
   try {
     const { descriptionOccurred, detailsInvolved, type, evidences } = req.body;
+    console.log(req.body);
     const report = await client.report.create({
       data: {
         descriptionOccurred,
@@ -26,7 +27,7 @@ export default async function handler(req: NextApiRequestExtended, res: NextApiR
     evidences.forEach(
       async (dataURL) => await client.evidence.create({ data: { dataURL, reportId: report.id } })
     );
-    res.status(201).json(new ApiResponse(true, {}));
+    res.status(201).json(new ApiResponse(true, null));
   } catch (error) {
     if (error instanceof Exception) return res.status(error.status).json(error);
     console.log(error);
