@@ -36,6 +36,7 @@ export default function FormReport() {
     });
     Promise.all(evidences).then(async (e) => {
       try {
+        console.log({ type, descriptionOccurred, detailsInvolved, evidences: e });
         const response = await fetch('/api/report', {
           method: 'POST',
           body: JSON.stringify({ type, descriptionOccurred, detailsInvolved, evidences: e }),
