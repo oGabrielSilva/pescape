@@ -44,8 +44,6 @@ export default function FormReport() {
           },
         });
 
-        console.log(response);
-
         const api = (await response.json()) as ApiResponse;
         if (api.success) {
           setVisible(false);

@@ -16,7 +16,6 @@ interface NextApiRequestExtended extends NextApiRequest {
 export default async function handler(req: NextApiRequestExtended, res: NextApiResponse) {
   try {
     const { descriptionOccurred, detailsInvolved, type, evidences } = req.body;
-    console.log(req.body);
     const report = await client.report.create({
       data: {
         descriptionOccurred,
