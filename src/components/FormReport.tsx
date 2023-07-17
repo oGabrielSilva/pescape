@@ -35,23 +35,27 @@ export default function FormReport() {
       return await func();
     });
     Promise.all(evidences).then(async (e) => {
-      const response = await fetch('/api/report', {
-        method: 'POST',
-        body: JSON.stringify({ type, descriptionOccurred, detailsInvolved, evidences: e }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      try {
+        const response = await fetch('/api/report', {
+          method: 'POST',
+          body: JSON.stringify({ type, descriptionOccurred, detailsInvolved, evidences: e }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      const api = (await response.json()) as ApiResponse;
-      if (api.success) {
-        setVisible(false);
-        selectTypeRef.current!.selectedIndex = 0;
-        setFiles([]);
-        inputDescriptionRef.current!.value = '';
-        inputDetailsRef.current!.value = '';
+        const api = (await response.json()) as ApiResponse;
+        if (api.success) {
+          setVisible(false);
+          selectTypeRef.current!.selectedIndex = 0;
+          setFiles([]);
+          inputDescriptionRef.current!.value = '';
+          inputDetailsRef.current!.value = '';
+        }
+        setSending(false);
+      } catch (error) {
+        console.log(error);
       }
-      setSending(false);
     });
   };
 
