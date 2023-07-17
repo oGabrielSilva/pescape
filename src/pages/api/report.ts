@@ -23,12 +23,10 @@ export default async function handler(req: NextApiRequestExtended, res: NextApiR
         type,
       },
     });
-    const e = evidences.map(
+    evidences.forEach(
       async (dataURL) => await client.evidence.create({ data: { dataURL, reportId: report.id } })
     );
-    Promise.all(e).then((e) => {
-      res.status(201).json(new ApiResponse(true, {}));
-    });
+    res.status(201).json(new ApiResponse(true, {}));
   } catch (error) {
     if (error instanceof Exception) return res.status(error.status).json(error);
     console.log(error);
