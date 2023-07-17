@@ -12,7 +12,6 @@ export default function FormReport() {
 
   const [files, setFiles] = useState<Array<File>>([]);
   const [sending, setSending] = useState(false);
-  const [lastSubmit, setLastSubmit] = useState<ApiResponse | null>(null);
 
   const selectTypeRef = useRef<HTMLSelectElement>(null);
   const inputDescriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -45,9 +44,14 @@ export default function FormReport() {
       });
 
       const api = (await response.json()) as ApiResponse;
-
+      if (api.success) {
+        setVisible(false);
+        selectTypeRef.current!.selectedIndex = 0;
+        setFiles([]);
+        inputDescriptionRef.current!.value = '';
+        inputDetailsRef.current!.value = '';
+      }
       setSending(false);
-      setLastSubmit(api);
     });
   };
 
@@ -191,54 +195,6 @@ export default function FormReport() {
           accept="image/*, video/*, audio/*, .txt,.doc,.docx,.pdf"
           multiple
         />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-          }}
-        >
-          {lastSubmit && !sending ? (
-            <span
-              style={{
-                color: lastSubmit.success ? 'var(--title)' : 'var(--danger)',
-                fontWeight: 700,
-              }}
-            >
-              {lastSubmit.success ? (
-                <>
-                  {strings.reportSuccess}{' '}
-                  <a
-                    style={{ cursor: 'copy' }}
-                    title={strings.copy}
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.document.body.classList.add('wait');
-                      const { currentTarget } = e;
-                      currentTarget.style.cursor = 'wait';
-                      navigator.clipboard
-                        .writeText((lastSubmit.body as any).report.code || '')
-                        .then(() =>
-                          setTimeout(() => {
-                            window.document.body.classList.remove('wait');
-                            currentTarget.style.cursor = 'copy';
-                          }, 800)
-                        );
-                    }}
-                  >
-                    {(lastSubmit.body as any).report.code! || ''}
-                  </a>
-                </>
-              ) : (
-                <></>
-              )}
-            </span>
-          ) : (
-            <></>
-          )}
-        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <button
             disabled={sending}

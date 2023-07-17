@@ -57,19 +57,6 @@ export default function Main() {
         >
           {strings.makeYourReport}
         </button>
-        <button
-          style={{
-            width: '50%',
-            maxWidth: 200,
-            background: 'transparent',
-            padding: '0.5rem 1rem',
-            borderRadius: 4,
-            fontWeight: 700,
-            color: 'var(--variant)',
-          }}
-        >
-          {strings.trackYourReport}
-        </button>
       </section>
       <div
         style={{

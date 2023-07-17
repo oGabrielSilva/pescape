@@ -15,7 +15,6 @@ model Report {
   type                String
   detailsInvolved     String
   descriptionOccurred String
-  code                String
   createdAt           DateTime   @default(now())
   evidences           Evidence[]
 }
