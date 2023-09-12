@@ -4,9 +4,7 @@ import { es } from '@PescaPE/resources/i18n/es';
 import { fr } from '@PescaPE/resources/i18n/fr';
 import { nl } from '@PescaPE/resources/i18n/nl';
 import { de } from '@PescaPE/resources/i18n/de';
-import { qu } from '@PescaPE/resources/i18n/qu';
-import { gu } from '@PescaPE/resources/i18n/gu';
 
-const displayStrings = { pt, en, es, fr, nl, de, qu, gu };
+const displayStrings = { pt, en, es, fr, nl, de };
 
 export default displayStrings;
